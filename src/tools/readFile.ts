@@ -1,14 +1,23 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
+import { validatePath } from './pathUtils';
 
-function toUri(p: string): vscode.Uri {
-  if (path.isAbsolute(p)) { return vscode.Uri.file(p); }
-  const ws = vscode.workspace.workspaceFolders?.[0]?.uri;
-  if (!ws) { throw new Error('No workspace open'); }
-  return vscode.Uri.joinPath(ws, p);
-}
+const MAX_READ_BYTES = 100_000; // ~100 KB — keeps context window sane
 
 export async function readFileTool(args: { path: string }): Promise<string> {
-  const bytes = await vscode.workspace.fs.readFile(toUri(args.path));
+  if (!args.path) { return 'Error: path argument is required.'; }
+  // Block path traversal attempts
+  let safePath: string;
+  try { safePath = validatePath(args.path); }
+  catch (e: unknown) { return 'Error: ' + (e instanceof Error ? e.message : String(e)); }
+  let bytes: Uint8Array;
+  try {
+    bytes = await vscode.workspace.fs.readFile(vscode.Uri.file(safePath));
+  } catch (e: unknown) {
+    return 'Error reading file: ' + (e instanceof Error ? e.message : String(e));
+  }
+  if (bytes.byteLength > MAX_READ_BYTES) {
+    const truncated = Buffer.from(bytes.slice(0, MAX_READ_BYTES)).toString('utf8');
+    return truncated + `\n\n[...truncated — file is ${bytes.byteLength} bytes, showing first ${MAX_READ_BYTES}]`;
+  }
   return Buffer.from(bytes).toString('utf8');
 }

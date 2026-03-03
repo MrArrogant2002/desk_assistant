@@ -1,0 +1,33 @@
+# Desk Assistant ignore file
+# Patterns here exclude files from @mention autocomplete and context injection.
+# Supports glob wildcards (* and ?). One pattern per line.
+
+# Build outputs
+out/
+dist/
+build/
+.next/
+target/
+
+# Virtual environments & package caches
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Version control
+.git/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+*.vsix
+*.vscodeignore
+
+# Large generated files
+*.min.js
+*.min.css
+*.map
+package-lock.json
+yarn.lock

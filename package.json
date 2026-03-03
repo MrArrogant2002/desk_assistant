@@ -2,21 +2,65 @@
   "name": "desk-assistant",
   "displayName": "Desk Assistant",
   "description": "Local Ollama-powered coding assistant",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "publisher": "eswarbalu",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Other"],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "deskAssistant",
+          "title": "Desk Assistant",
+          "icon": "webview/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "deskAssistant": [
+        {
+          "type": "webview",
+          "id": "deskAssistant.chatView",
+          "name": "Chat",
+          "retainContextWhenHidden": true
+        }
+      ]
+    },
     "commands": [
-      { "command": "deskAssistant.openChat", "title": "Desk Assistant: Open Chat" },
-      { "command": "deskAssistant.pickModel", "title": "Desk Assistant: Pick Model" }
+      { "command": "deskAssistant.openChat",       "title": "Desk Assistant: Open Chat" },
+      { "command": "deskAssistant.pickModel",      "title": "Desk Assistant: Pick Model" },
+      { "command": "deskAssistant.newChat",        "title": "Desk Assistant: New Chat" },
+      { "command": "deskAssistant.fixError",       "title": "Desk Assistant: Fix Error with AI" },
+      { "command": "deskAssistant.explainError",   "title": "Desk Assistant: Explain Error" },
+      { "command": "deskAssistant.benchmarkModels","title": "Desk Assistant: Benchmark Models" }
+    ],
+    "keybindings": [
+      { "command": "deskAssistant.openChat",    "key": "ctrl+shift+a", "when": "!inputFocus" },
+      { "command": "deskAssistant.explainError","key": "ctrl+shift+e", "when": "editorFocus" },
+      { "command": "deskAssistant.fixError",    "key": "ctrl+shift+f", "when": "editorFocus" }
     ],
     "configuration": {
       "title": "Desk Assistant",
       "properties": {
-        "deskAssistant.defaultModel": { "type": "string", "default": "mistral:latest" },
-        "deskAssistant.ollamaBaseUrl": { "type": "string", "default": "http://localhost:11434" }
+        "deskAssistant.defaultModel":           { "type": "string",  "default": "llama3.2:latest",        "description": "Ollama model to use" },
+        "deskAssistant.ollamaBaseUrl":          { "type": "string",  "default": "http://localhost:11434",   "description": "Ollama base URL" },
+        "deskAssistant.injectActiveFile":       { "type": "boolean", "default": true,                       "description": "Auto-inject active editor file into context" },
+        "deskAssistant.maxHistoryTurns":        { "type": "number",  "default": 50,                         "description": "Max conversation turns to persist" },
+        "deskAssistant.numCtx":                 { "type": "number",  "default": 8192,                       "description": "Context window size passed to Ollama (tokens)" },
+        "deskAssistant.enableWebSearch":        { "type": "boolean", "default": true,                       "description": "Allow search_web tool calls" },
+        "deskAssistant.enableInlineCompletions":{ "type": "boolean", "default": false,                      "description": "Enable ghost-text inline completions (requires a fast model)" },
+        "deskAssistant.completionModel":        { "type": "string",  "default": "qwen2.5-coder:1.5b",        "description": "Ollama model used for inline completions (use a small fast model, e.g. qwen2.5-coder:1.5b)" },
+        "deskAssistant.completionDebounceMs":   { "type": "number",  "default": 600,                        "description": "Milliseconds to wait after typing before requesting a completion" },
+        "deskAssistant.completionMaxLines":     { "type": "number",  "default": 20,                         "description": "Lines of code before cursor to include as completion context" },
+        "deskAssistant.enableRouter":            { "type": "boolean", "default": true,                        "description": "Use Marco-o1 to classify intent and route each message to the best specialist model" },
+        "deskAssistant.showRoutingInfo":         { "type": "boolean", "default": true,                        "description": "Show a routing-decision bubble in the chat panel for each message" },
+        "deskAssistant.routerModel":             { "type": "string",  "default": "marco-o1:latest",           "description": "Ollama model used to classify intent (default: marco-o1:latest)" },
+        "deskAssistant.routerFallbackModel":     { "type": "string",  "default": "mistral:7b",                 "description": "Fallback model when router model is not installed" },
+        "deskAssistant.chatModel":               { "type": "string",  "default": "CodeGemma:latest",           "description": "Default chat / code-generation model" },
+        "deskAssistant.summaryModel":            { "type": "string",  "default": "llama3.2:latest",            "description": "Model used for internal summarisation tasks (memory, session titles)" },
+        "deskAssistant.terminalBlocklist":        { "type": "array",   "items": { "type": "string" }, "default": [], "description": "Additional command patterns to block from run_terminal (e.g. \"rm -rf /\"). Built-in dangerous patterns are always blocked." },
+        "deskAssistant.autoApproveEdits":         { "type": "boolean", "default": false,                       "markdownDescription": "Automatically apply all file edits without showing a diff confirmation dialog. When enabled, the AI can modify files directly. **Use with caution.**" }
       }
     }
   },
