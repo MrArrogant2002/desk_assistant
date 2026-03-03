@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Compiled output
+out/
+*.js.map
+
+# Packaged extension
+*.vsix
+
+# VS Code user settings (keep launch.json / tasks.json if needed)
+.vscode/settings.json
+.vscode/extensions.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Logs
+*.log
+npm-debug.log*

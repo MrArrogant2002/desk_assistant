@@ -1,0 +1,33 @@
+{
+  "name": "desk-assistant",
+  "displayName": "Desk Assistant",
+  "description": "Local Ollama-powered coding assistant",
+  "version": "0.0.3",
+  "publisher": "eswarbalu",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "deskAssistant.openChat", "title": "Desk Assistant: Open Chat" },
+      { "command": "deskAssistant.pickModel", "title": "Desk Assistant: Pick Model" }
+    ],
+    "configuration": {
+      "title": "Desk Assistant",
+      "properties": {
+        "deskAssistant.defaultModel": { "type": "string", "default": "mistral:latest" },
+        "deskAssistant.ollamaBaseUrl": { "type": "string", "default": "http://localhost:11434" }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.1",
+    "typescript": "^5.4.2"
+  }
+}
